@@ -1,0 +1,4 @@
+# mbed ignore
+
+*/BUILD/
+*/mbed-os/
