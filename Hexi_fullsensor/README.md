@@ -51,5 +51,6 @@ right side buttons. The default is right so I kept it that way.
 
 All libraries used in this implementation use the licenses:
 - Apache v2
+- MIT
 - GPLv3
 - Beerware
