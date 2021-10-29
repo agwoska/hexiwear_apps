@@ -13,9 +13,9 @@ Implements Hexiwear utilizing all of its sensors (except light).
 
 The sensors present on Hexiwear are:
 - Humidity and Temperature (HTU)
-- Accelerometer and Magnometer (FXOS)
-- Gyroscope (FX8700)
-- KW40
+- Accelerometer and Magnometer (FSAX21002)
+- Gyroscope (FXOS8700)
+- KW40Z
 - Heart Rate Monitor (MAX31010)
 - Light Sensor (not used)
 
