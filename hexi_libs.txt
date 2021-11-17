@@ -1,17 +1,16 @@
 Hexiwear Libraries Used
 
-http://os.mbed.com/users/AswinSivakumar/code/FXAS21002/#c9ebfc81e8b69fb6458763c3b610636f15898128
+http://os.mbed.com/users/AswinSivakumar/code/FXAS21002/
 
-https://os.mbed.com/users/AswinSivakumar/code/FXOS8700/#df21673702340050c80d63f3e7944bab89229999
+https://os.mbed.com/users/AswinSivakumar/code/FXOS8700/
 
-http://os.mbed.com/teams/Hexiwear/code/Hexi_Humid_Temp_Example/#caccf1879f14c28801ea544682505e087bcec54b
+http://os.mbed.com/teams/Hexiwear/code/Hexi_Humid_Temp_Example/
 
-http://os.mbed.com/teams/Hexiwear/code/Hexi_KW40Z/#3f5ed7abc5c72e75595f56ba7a515d79f01a950f
+http://os.mbed.com/teams/Hexiwear/code/Hexi_KW40Z/
 
-http://os.mbed.com/teams/MaximIntegrated/code/MAX30101/#85513b7480f5273402c6acd3bc4fa468f58a48ac
+http://os.mbed.com/teams/MaximIntegrated/code/MAX30101/
 
-http://os.mbed.com/teams/MaximIntegrated/code/MAX30101/#85513b7480f5273402c6acd3bc4fa468f58a48ac
+http://os.mbed.com/users/i_am_kitsune/code/TSL2561/
 
-http://os.mbed.com/users/i_am_kitsune/code/TSL2561/#f36a139bee4b5e95fee0992ab92912133b7dfd61
-
+MBED OS 5.12
 https://github.com/ARMmbed/mbed-os.git#0be7685a27f28c02737f42055f4a9c182a7b483c
