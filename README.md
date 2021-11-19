@@ -14,3 +14,15 @@ This project is being done as undergraduate research at the
 Work was completed by Andrew Woska in 2021.
 
 You can reach me at agwoska@buffalo.edu.
+
+## Licensing
+
+Certain libraries may be released under certain licenses. 
+Observe and respect all licenses.
+Licenses will be listed under folder README.
+
+Licenses used throughout repository:
+- Apache
+- MIT
+- GPL
+- Beerware
