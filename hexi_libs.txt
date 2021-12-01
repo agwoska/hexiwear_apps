@@ -14,3 +14,6 @@ http://os.mbed.com/users/i_am_kitsune/code/TSL2561/
 
 MBED OS 5.12
 https://github.com/ARMmbed/mbed-os.git#0be7685a27f28c02737f42055f4a9c182a7b483c
+
+Kalman Filter Library
+https://github.com/TKJElectronics/KalmanFilter
