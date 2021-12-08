@@ -1,11 +1,11 @@
 /**
  * @file Hexi_Kalman.h
- * @author Andrew W
+ * @author Andrew Woska (agwoska@buffalo.edu)
  * @date created 11/30/21
  * @brief defines a Kalman Filter for
  *      the a Hexiwear IMU
  * 
- * last updated 12/01/21
+ * last updated 12/03/21
  */
 
 #pragma once
@@ -34,7 +34,11 @@
 
 /** structures */
 
-typedef struct {
+/**
+ * structure to hold 3 dimentional vector
+ * @deprecated use variables in the class under public
+ */
+typedef struct Vector {
     float x;
     float y;
     float z;
@@ -56,25 +60,61 @@ typedef struct {
 class KalmanIMU {
 
 public:
+    /** public functions */
+
+    /**
+     * constructor for KalmanIMU
+     */
     KalmanIMU();
     
+    /**
+     * sets up everything for the Kalman Filter to run correctly
+     */
     void setup();
 
+    /**
+     * get the next Kalman Filtered value
+     */
     void setKalman();
 
+    /**
+     * calculate roll using Kalman Filter
+     */
     float calcRoll();
+
+    /**
+     * calculate pitch using Kalman Filter
+     */
     float calcPitch();
+
+    /**
+     * calculate yaw using Kalman Filter TODO testing
+     */
     float calcYaw();
+
+    /**
+     * @return copy of current Kalman Filtered values
+     */
+    kalman_data_t *getKalmanData();
+
+    /** public variables */
+
+    /**
+     * array positions and values:
+     * [0] - x-axis
+     * [1] - y-axis
+     * [2] - z-axis
+     */
 
     float accel_data[3];
     float mag_data[3]; 
     float gyro_data[3];
 
+    /* holds the data for the current Kalman Filtered values */
     kalman_data_t *kalData;
-    kalman_data_t *getKalmanData();
 
 private:
-
+    /** all sensor object declarations */
     FXOS8700 accel;
     FXOS8700 mag;
     FXAS21002 gyro;
@@ -83,8 +123,9 @@ private:
     Kalman kalman_roll;
     Kalman kalman_yaw;
 
+    /* timer for Kalman calculations */
     Timer t;
-
+    /* holds last time value found */
     uint32_t lTime;
 
 };

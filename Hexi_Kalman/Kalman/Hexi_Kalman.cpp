@@ -1,11 +1,11 @@
 /**
  * @file Hexi_Kalman.cpp
- * @author Andrew W
+ * @author Andrew Woska (agwoska@buffalo.edu)
  * @date created 11/30/21
  * @brief implements a Kalman Filter for
  *      the a Hexiwear IMU
  * 
- * last updated 12/01/21
+ * last updated 12/03/21
  */
 
 
@@ -47,7 +47,6 @@ void KalmanIMU::setup() {
     lTime = t.read_ms();
 
     wait_us(5);
-    printf("setup complete\r\n");
 }
 
 
@@ -119,39 +118,48 @@ void KalmanIMU::setKalman() {
         gyroAngle[1] = kalAngle[1];
     }
 
+    // set Yaw
+    kalAngle[2] = yaw;
+
 
     #ifdef DEBUG
-    printf("Accelerometer \tX-Axis %4.2f \tY-Axis %4.2f \tZ-Axis %4.2f\n\r",
-        accel_data[0],
-        accel_data[1],
-        accel_data[2]
-    );
-    printf("Magnetometer \tX-Axis %4.2f \tY-Axis %4.2f \tZ-Axis %4.2f\n\r",
-        mag_data[0],
-        mag_data[1],
-        mag_data[2]
-    );
-    printf("Gyroscope \tRoll %4.2f \tPitch %4.2f \tYaw %4.2f\n\r",
-        gyro_data[0],
-        gyro_data[1],
-        gyro_data[2]
-    );
-    printf("Kalman X \tRoll %4.2f \tGyro %4.2f \tAngle %4.2f\n\r",
-        roll,
-        gyroAngle[0],
-        kalAngle[0]
-    );
-    printf("Kalman Y \tPitch %4.2f \tGyro %4.2f \tAngle %4.2f\n\r",
+    // printf("Accelerometer \tX-Axis %4.2f \tY-Axis %4.2f \tZ-Axis %4.2f\n\r",
+    //     accel_data[0],
+    //     accel_data[1],
+    //     accel_data[2]
+    // );
+    // printf("Magnetometer \tX-Axis %4.2f \tY-Axis %4.2f \tZ-Axis %4.2f\n\r",
+    //     mag_data[0],
+    //     mag_data[1],
+    //     mag_data[2]
+    // );
+    // printf("Gyroscope \tRoll %4.2f \tPitch %4.2f \tYaw %4.2f\n\r",
+    //     gyro_data[0],
+    //     gyro_data[1],
+    //     gyro_data[2]
+    // );
+    // printf("Kalman X \tRoll %4.2f \tGyro %4.2f \tAngle %4.2f\n\r",
+    //     roll,
+    //     gyroAngle[0],
+    //     kalAngle[0]
+    // );
+    // printf("Kalman Y \tPitch %4.2f \tGyro %4.2f \tAngle %4.2f\n\r",
+    //     pitch,
+    //     gyroAngle[1],
+    //     kalAngle[1]
+    // );
+    // printf("Kalman Z \tYaw %4.2f \tGyro %4.2f \tAngle %4.2f\n\r",
+    //     yaw,
+    //     gyroAngle[2],
+    //     kalAngle[2]
+    // );
+    // printf("\n\r");
+    printf("%4.2f\t%4.2f\t%4.2f\n\r",
         pitch,
-        gyroAngle[1],
+        gyro_data[1],
         kalAngle[1]
     );
-    printf("Kalman Z \tYaw %4.2f \tGyro %4.2f \tAngle %4.2f\n\r",
-        yaw,
-        gyroAngle[2],
-        kalAngle[2]
-    );
-    printf("\n\r");
+    // printf("%4.2f\n\r", yaw);
     #endif // DEBUG
 }
 
@@ -187,7 +195,16 @@ float KalmanIMU::calcPitch() {
 }
 
 float KalmanIMU::calcYaw() {
-    return 0.0f;
+    float x = 
+        mag_data[0] * cos(gyro_data[0]) -
+        mag_data[1] * sin(gyro_data[1]) +
+        mag_data[2] * cos(gyro_data[1]) *
+        sin(gyro_data[0]);
+    float y =
+        mag_data[1] * cos(gyro_data[1]) +
+        mag_data[2] * sin(gyro_data[2]);
+
+    return atan2(y, x) / 23.14 * 360.0;
 }
 
 
@@ -196,7 +213,7 @@ float KalmanIMU::calcYaw() {
  * only use for debugging purposes
  */
 kalman_data_t *KalmanIMU::getKalmanData() {
-    kalman_data_t *holder;
-    memcpy((void *)holder, (void *)kalData, sizeof(kalman_data_t));
-    return holder;
+    kalman_data_t *foo;
+    memcpy((void *)foo, (void *)kalData, sizeof(kalman_data_t));
+    return foo;
 }
