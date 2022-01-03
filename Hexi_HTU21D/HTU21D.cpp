@@ -41,10 +41,9 @@ int HTU21D::getTemp() {
     ThisThread::sleep_for(1);
 
     // compute temp (pg. 15)
-    unsigned int rawTemp = ((unsigned int)rx[0] << 8) | (unsigned int)rx[1];
+    unsigned int rawTemp = (rx[0] << 8) | rx[1];
     rawTemp &= 0xFFFC; // remove status bits
-    float actTemp = -46.85 + 175.72 * rawTemp / (float)(1 << 16);
-    return (int)actTemp;
+    return -46.85 + 175.72 * rawTemp / (1 << 16);
 
 }
 
@@ -62,7 +61,7 @@ int HTU21D::getHumidity() {
     ThisThread::sleep_for(1);
 
     // compute temp (pg. 15)
-    unsigned int rawHumd = ((unsigned int)rx[0] << 8) | (unsigned int)rx[1];
+    unsigned int rawHumd = (rx[0] << 8) | rx[1];
     rawHumd &= 0xFFFC; // remove status bits
     return -6 + 125 * rawHumd / (1 << 16);
 
