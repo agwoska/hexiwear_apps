@@ -7,7 +7,7 @@
  * 
  * documentation: https://cdn-shop.adafruit.com/datasheets/1899_HTU21D.pdf
  * 
- * last updated: 
+ * last updated: Jan 03, 2022
  */
 
 #include "HTU21D.h"
