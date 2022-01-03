@@ -33,11 +33,12 @@ int HTU21D::getTemp() {
     // send temperature trigger
     tx[0] = HTU21D_TRIG_TEMP;
     i2c.write((HTU21D_I2C_ADDR << 1) & HTU21D_SOFT_RESET, tx, 1);
-    ThisThread::sleep_for(50ms); // (max time req pg. 5)
+
+    ThisThread::sleep_for(50); // 50ms (max time req pg. 5)
 
     // read measurement
     i2c.read((HTU21D_I2C_ADDR << 1) | 1, rx, 2);
-    ThisThread::sleep_for(1ms);
+    ThisThread::sleep_for(1);
 
     // compute temp (pg. 15)
     unsigned int rawTemp = ((unsigned int)tx[0] << 8) | (unsigned int)rx[1];
@@ -54,11 +55,11 @@ int HTU21D::getHumidity() {
     // send temperature trigger
     tx[0] = HTU21D_TRIG_HUMD;
     i2c.write((HTU21D_I2C_ADDR << 1) & HTU21D_SOFT_RESET, tx, 1);
-    ThisThread::sleep_for(16ms); // (max time req pg. 3)
+    ThisThread::sleep_for(16); // (max time req pg. 3)
 
     // read measurement
     i2c.read((HTU21D_I2C_ADDR << 1) | 1, rx, 2);
-    ThisThread::sleep_for(1ms);
+    ThisThread::sleep_for(1);
 
     // compute temp (pg. 15)
     unsigned int rawHumd = ((unsigned int)tx[0] << 8) | (unsigned int)rx[1];
