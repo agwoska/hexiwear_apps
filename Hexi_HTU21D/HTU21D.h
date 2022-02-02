@@ -76,6 +76,12 @@ public:
      */
     int getTemp();
 
+    /** macros for backwards compatability */
+    /* Get temperature in Celcius */
+    int sample_ctemp() { return getTemp(); }
+    /* Get humidity as a percent */
+    int sample_humid() { return getHumidity(); }
+
 private:
 
     /**
