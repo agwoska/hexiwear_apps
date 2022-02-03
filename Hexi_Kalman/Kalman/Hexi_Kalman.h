@@ -4,6 +4,7 @@
  * @date created 11/30/21
  * @brief defines a Kalman Filter for
  *      the a Hexiwear IMU
+ *
  * 
  * last updated 12/03/21
  */

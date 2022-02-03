@@ -2,3 +2,6 @@
 
 */BUILD/
 */mbed-os/
+
+# VS Code ignore
+.vscode

@@ -155,9 +155,9 @@ void KalmanIMU::setKalman() {
     // );
     // printf("\n\r");
     printf("%4.2f\t%4.2f\t%4.2f\n\r",
-        pitch,
-        gyro_data[1],
-        kalAngle[1]
+        roll,
+        gyro_data[0],
+        kalAngle[0]
     );
     // printf("%4.2f\n\r", yaw);
     #endif // DEBUG
@@ -165,33 +165,33 @@ void KalmanIMU::setKalman() {
 
 
 float KalmanIMU::calcRoll() {
-    #ifdef RESTRICT_PITCH
+    // #ifdef RESTRICT_PITCH
     return atan2(
         accel_data[1], accel_data[2]
     ) * RAD_TO_DEG;
-    #else
-    return atan(
-        accel_data[1] / sqrt (
-            accel_data[0] * accel_data[0] +
-            accel_data[2] * accel_data[2]
-        ) * RAD_TO_DEG
-    );
-    #endif // RESTRICT_PATH
+    // #else
+    // return atan(
+    //     accel_data[1] / sqrt (
+    //         accel_data[0] * accel_data[0] +
+    //         accel_data[2] * accel_data[2]
+    //     ) * RAD_TO_DEG
+    // );
+    // #endif // RESTRICT_PATH
 }
 
 float KalmanIMU::calcPitch() {
-    #ifdef RESTRICT_PITCH
-    return atan(
-        -accel_data[0] / sqrt(
-            accel_data[1] * accel_data[1] +
-            accel_data[2] * accel_data[2]
-        ) * RAD_TO_DEG
-    );
-    #else
+    // #ifdef RESTRICT_PITCH
+    // return atan(
+    //     -accel_data[0] / sqrt(
+    //         accel_data[1] * accel_data[1] +
+    //         accel_data[2] * accel_data[2]
+    //     ) * RAD_TO_DEG
+    // );
+    // #else
     return atan2(
         -accel_data[0], accel_data[2]
     ) * RAD_TO_DEG;
-    #endif // RESTRICT_PATH
+    // #endif // RESTRICT_PATH
 }
 
 float KalmanIMU::calcYaw() {
