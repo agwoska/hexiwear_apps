@@ -7,7 +7,7 @@
  * 
  * datasheet: https://cdn-shop.adafruit.com/datasheets/1899_HTU21D.pdf
  * 
- * last updated: Jan 02, 2022
+ * last updated: Feb 3, 2022
  */
 
 #pragma once
