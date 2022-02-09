@@ -5,7 +5,7 @@
  * @brief implements a Kalman Filter for
  *      the a Hexiwear IMU
  * 
- * last updated 12/03/21
+ * last updated 2/08/22
  */
 
 
@@ -29,6 +29,7 @@ void KalmanIMU::setup() {
 
     // set up Kalman Filter by setting starting angle
     accel.acquire_accel_data_g(accel_data);
+    mag.acquire_mag_data_uT(mag_data);
     float roll  = calcRoll();
     kalman_roll.setAngle(roll);
     kalData->kalAngle[0] = roll;
@@ -38,7 +39,7 @@ void KalmanIMU::setup() {
     kalData->kalAngle[1]  = pitch;
     kalData->gyroAngle[1] = pitch;
     float yaw = calcYaw();
-    kalman_pitch.setAngle(pitch);
+    kalman_yaw.setAngle(yaw);
     kalData->kalAngle[2]  = yaw;
     kalData->gyroAngle[2] = yaw;
 
@@ -65,7 +66,7 @@ void KalmanIMU::setKalman() {
     // calculate new Kalman Angles
     float roll  = calcRoll();
     float pitch = calcPitch();
-    float yaw = calcYaw();
+    float yaw   = calcYaw();
     float gyroRateX = gyro_data[0];
     float gyroRateY = gyro_data[1];
     float gyroRateZ = gyro_data[2];
@@ -74,6 +75,7 @@ void KalmanIMU::setKalman() {
     float *gyroAngle = kalData->gyroAngle;
 
     #ifdef RESTRICT_PITCH
+
     if ( (roll < -90.0 && kalAngle[0] > 90.0) ||
          (roll > 90.0 && kalAngle[0] < -90.0) ) {
             kalman_roll.setAngle(roll);
@@ -105,6 +107,7 @@ void KalmanIMU::setKalman() {
         gyroRateX = -gyroRateX;
     }
     kalAngle[0] = kalman_roll.getAngle(roll, gyroRateX, dt);
+    
     #endif // RESTRICT_PITCH
 
     gyroAngle[0] += gyroRateX * dt;
@@ -156,8 +159,8 @@ void KalmanIMU::setKalman() {
     // printf("\n\r");
     printf("%4.2f\t%4.2f\t%4.2f\n\r",
         roll,
-        gyro_data[0],
-        kalAngle[0]
+        pitch,
+        yaw
     );
     // printf("%4.2f\n\r", yaw);
     #endif // DEBUG
@@ -166,9 +169,11 @@ void KalmanIMU::setKalman() {
 
 float KalmanIMU::calcRoll() {
     // #ifdef RESTRICT_PITCH
-    return atan2(
+    float theta = atan2(
         accel_data[1], accel_data[2]
     ) * RAD_TO_DEG;
+    angles[0] = theta;
+    return theta;
     // #else
     // return atan(
     //     accel_data[1] / sqrt (
@@ -188,23 +193,41 @@ float KalmanIMU::calcPitch() {
     //     ) * RAD_TO_DEG
     // );
     // #else
-    return atan2(
+    float phi = atan2(
         -accel_data[0], accel_data[2]
     ) * RAD_TO_DEG;
+    angles[1] = phi;
+    return phi;
     // #endif // RESTRICT_PATH
 }
 
 float KalmanIMU::calcYaw() {
-    float x = 
-        mag_data[0] * cos(gyro_data[0]) -
-        mag_data[1] * sin(gyro_data[1]) +
-        mag_data[2] * cos(gyro_data[1]) *
-        sin(gyro_data[0]);
-    float y =
-        mag_data[1] * cos(gyro_data[1]) +
-        mag_data[2] * sin(gyro_data[2]);
+    // return atan2(
+    //     -accel_data[1], accel_data[0]
+    // );
+    // float x = 
+    //     mag_data[0] * cos(gyro_data[0]) -
+    //     mag_data[1] * sin(gyro_data[1]) +
+    //     mag_data[2] * cos(gyro_data[1]) *
+    //     sin(gyro_data[0]);
+    // float y =
+    //     mag_data[1] * cos(gyro_data[1]) +
+    //     mag_data[2] * sin(gyro_data[2]);
 
-    return atan2(y, x) / 23.14 * 360.0;
+    // return atan2(y, x) / 23.14 * 360.0;
+
+    // TODO
+    // https://digitalcommons.calpoly.edu/cgi/viewcontent.cgi?referer=&httpsredir=1&article=1422&context=eesp
+    float Mx = 
+        mag_data[0] * cos(angles[1]) + 
+        mag_data[2] * sin(angles[1]);
+    float My =
+        mag_data[0] * sin(angles[0]) * sin(angles[1]) +
+        mag_data[1] * cos(angles[0]) -
+        mag_data[2] * sin(angles[0]) * cos(angles[1]);
+    float psi = atan2(-My,Mx) * RAD_TO_DEG;
+    angles[2] = psi;
+    return psi;
 }
 
 
@@ -216,4 +239,21 @@ kalman_data_t *KalmanIMU::getKalmanData() {
     kalman_data_t *foo;
     memcpy((void *)foo, (void *)kalData, sizeof(kalman_data_t));
     return foo;
+}
+
+// from the Quake III Q_rsqrt function
+// https://en.wikipedia.org/wiki/Fast_inverse_square_root
+float invSqrt(float num) {
+    int i;
+    float x, y;
+    const float threehalfs = 1.5f;
+
+    x = num * 0.5f;
+    y = num;
+    i = *(long *)&y;
+    i = 0x5f3759df - (i >> 1);
+    y = *(float *)&i;
+    y = y * (threehalfs - (x * y * y));
+    
+    return y;
 }

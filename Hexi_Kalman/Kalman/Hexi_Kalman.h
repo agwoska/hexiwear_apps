@@ -4,9 +4,8 @@
  * @date created 11/30/21
  * @brief defines a Kalman Filter for
  *      the a Hexiwear IMU
- *
  * 
- * last updated 12/03/21
+ * last updated 2/08/21
  */
 
 #pragma once
@@ -123,6 +122,9 @@ private:
     Kalman kalman_pitch;
     Kalman kalman_roll;
     Kalman kalman_yaw;
+
+    /* contains values for roll, pitch, and yaw in that order */
+    float angles[3];
 
     /* timer for Kalman calculations */
     Timer t;
