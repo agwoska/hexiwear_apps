@@ -5,7 +5,7 @@
  * @brief implements a Kalman Filter for
  *      the a Hexiwear IMU
  * 
- * last updated 2/08/22
+ * last updated 2/15/22
  */
 
 
@@ -123,6 +123,9 @@ void KalmanIMU::setKalman() {
 
     // set Yaw
     kalAngle[2] = yaw;
+    // complementary filter for yaw
+    // TODO - Discord is down
+    
 
 
     #ifdef DEBUG
@@ -226,6 +229,8 @@ float KalmanIMU::calcYaw() {
         mag_data[1] * cos(angles[0]) -
         mag_data[2] * sin(angles[0]) * cos(angles[1]);
     float psi = atan2(-My,Mx) * RAD_TO_DEG;
+    // complementary filter
+    psi = 0.05f * angles[2] + 0.95f * psi;
     angles[2] = psi;
     return psi;
 }
