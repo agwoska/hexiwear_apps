@@ -171,11 +171,11 @@ class KW40Z {
      */
     ~KW40Z();
 
-    void attach_btnUp(button_t *btnFunct);
-    void attach_btnDown(button_t *btnFunct);
-    void attach_btnLeft(button_t *btnFunct);
-    void attach_btnRight(button_t *btnFunct);
-    void attach_btnSlide(button_t *btnFunct);
+    void attach_btnUp(button_t btnFunct);
+    void attach_btnDown(button_t btnFunct);
+    void attach_btnLeft(button_t btnFunct);
+    void attach_btnRight(button_t btnFunct);
+    void attach_btnSlide(button_t btnFunct);
 
     // TODO add BLE functions
 
@@ -191,8 +191,17 @@ private:
     button_t btnRight;
     button_t btnSlide;
 
+    alert_t alert;
+    passkey_t passkey;
+    notification_t notif;
+
     kwHostInterface_packet_t hostInterface_rx;
     kwHostInterface_packet_t hostInterface_tx;
+
+    uint8_t *rxBuffer;
+
+    void rxTask();
+    void mainTask();
 
     // TODO add additional useful variables, 
     // memory elements, and functions
