@@ -7,9 +7,13 @@
  *      with customized outputs
  * 
  * @note to be used with HexiIMU
+ * @note consider pull from original Mbed code
+ * @note add comments to know what to do
  * 
- * last updated: Feb 15, 2022
+ * last updated: Feb 17, 2022
  */
+
+#pragma once
 
 #ifndef KW40Z_H
 #define KW40Z_H
@@ -21,8 +25,11 @@
 // Comment in or out based on if you want to see
 // the package in the serial monitor
 #define DEBUG
+#define LIB_DEBUG
 
 /** Constants and Structures **/
+
+#define START_THREAD                    1
 
 /* communication */
 
@@ -177,7 +184,33 @@ class KW40Z {
     void attach_btnRight(button_t btnFunct);
     void attach_btnSlide(button_t btnFunct);
 
-    // TODO add BLE functions
+    void SendBattery(uint8_t percent);
+    void SendAccel(uint8_t accel_data[3]);
+    void SendMag(uint8_t mag_data[3]);
+    void SendGyro(uint8_t gyro_data[3]);
+    void SendTemp(uint16_t celsius);
+    void SendHumd(uint16_t percent);
+    void SendPressure(uint16_t pascal);
+    void SendHeartRate(uint16_t hr);
+
+    void SendSteps(uint16_t steps);
+    void SendCalories(uint16_t cal);
+    
+    void SendAlert(uint8_t *pData, uint8_t length);
+    void SendSetApplicationMode(kwHostInterface_gui_t mode);
+
+    // TODO additional BLE functions
+    void SendKalman(uint8_t kal_data[3]);
+
+    hexi_version_t GetVersion();
+
+    void ToggleTsiGroup();
+    void ToggleAdvertisementMode();
+
+    void GetTsiGroup();
+    void GetAdvertisementMode();
+    void GetLinkState();
+
 
 private:
 
@@ -199,16 +232,42 @@ private:
     kwHostInterface_packet_t hostInterface_tx;
 
     uint8_t *rxBuffer;
+    bool confirmReceived;
+
+    MemoryPool<kwHostInterface_packet_t, 50> mpool;
+    Queue<kwHostInterface_packet_t, 50> queue;
+
+    hexi_version_t kwVersion;
+    uint8_t activeTsiGroup;
+    uint8_t advertisementMode;
+    uint8_t linkState;
+    uint32_t bondPassKey;
 
     void rxTask();
     void mainTask();
 
+    void ProcessBuffer();
+    void ProcessReceivedPacket(kwHostInterface_packet_t *rxPacket);
+    void SendPacket(kwHostInterface_packet_t *txPacket, bool confirmReq);
+    void SearchStartByte();
+
+    void SendPacketOK();
+    void SendGetActiveTsiGroup();
+    void SendGetLinkState();
+    void SendGetVersion();
+
     // TODO add additional useful variables, 
     // memory elements, and functions
-    
 
-    hexi_version_t kwVersion;
+    static void rxStarter(void *p);
+    static void mainStarter(void *p);
 
+#ifdef LIB_DEBUG
+
+    void DebugPrintRxPacket(void *p);
+    void DebugPrintRxPacket(void *p);
+
+#endif // LIB_DEBUG
 };
 
 

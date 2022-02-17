@@ -6,17 +6,17 @@
  *      Hexiwear development in Mbed OS 5.12
  *      with customized outputs
  * 
- * last updated: Feb 15, 2022
+ * last updated: Feb 16, 2022
  */
 
 #include "KW40Z.h"
 
 KW40Z::KW40Z(PinName txPin, PinName rxPin) :
     serial(txPin, rxPin) {
-        device.format(8, Serial::None, 2);
+        serial.format(8, Serial::None, 2);
 
         // initialize all necessary variables
-        rxBuffer = (uint8_t *)&hostInterface_txMask;
+        rxBuffer = (uint8_t *)&hostInterface_rx;
 
         btnUp    = NULL;
         btnDown  = NULL;
@@ -24,7 +24,7 @@ KW40Z::KW40Z(PinName txPin, PinName rxPin) :
         btnRight = NULL;
         btnSlide = NULL;
         alert    = NULL;
-        passkey  = NULL
+        passkey  = NULL;
         notif    = NULL;
         
         // version
@@ -53,4 +53,50 @@ void KW40Z::attach_btnLeft(button_t btnFunct) {
 }
 void KW40Z::attach_btnRight(button_t btnFunct) { 
     btnRight = btnFunct;
+}
+
+
+
+
+
+
+
+
+
+
+void KW40Z::rxTask() {
+    while(1) {
+        if( serial.readable() ) {
+            *rxBuffer++ = serial.getc();
+            // TODO
+
+        }
+    }
+}
+
+void KW40Z::mainTask() {
+ // TODO
+ while(1) {
+     osEvent e = queue.get();
+     if ( osEventMessage == e.status ) {
+        kwHostInterface_packet_t *packet =
+            (kwHostInterface_packet_t *)e.value.p;
+        // TODO finish
+        mpool.free(packet);
+     }
+ }
+}
+
+
+
+
+
+
+
+
+hexi_version_t KW40Z::GetVersion() {
+    hexi_version_t ver = { 0 };
+    ver.verMajor = hexi_version_major;
+    ver.verMinor = hexi_version_minor;
+    ver.verPatch = hexi_version_patch;
 }
