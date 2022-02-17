@@ -5,3 +5,6 @@
 
 # VS Code ignore
 .vscode
+
+# other
+.hg
