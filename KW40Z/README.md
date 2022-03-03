@@ -1,4 +1,4 @@
-# Hexiwear KW40Z
+# Hexiwear KW40Z driver
 
 The KW40Z controls and implements the buttons
 and BLE on Hexiwear.
