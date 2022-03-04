@@ -9,7 +9,7 @@
  * @note based on Mbed program 
  *      https://os.mbed.com/teams/Hexiwear/code/Hexi_BLE_Example/
  * 
- * last updated 2022-03-03
+ * last updated 2022-03-04
  * 
  */
 
@@ -21,11 +21,14 @@
 #define LED_ON  0
 #define LED_OFF 1
 
+void setup();
+
 void txTask();
 void updateSensors();
 
 void btnLeft();
 void btnRight();
+void passKey();
 
 void startHaptics();
 void stopHaptics();
