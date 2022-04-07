@@ -5,7 +5,7 @@
  * @brief An application header as a 
  *      POC for the Hexiwear to work as a 
  *      therapeutic tool/technology
- * last modified 2022-04-05
+ * last modified 2022-04-06
  */
 
 #pragma once

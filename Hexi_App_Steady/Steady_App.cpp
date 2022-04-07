@@ -2,7 +2,7 @@
  * @file Steady_App.cpp
  * @author Andrew Woska (agwoska@buffalo.edu)
  * @date 2022-04-05
- * last update 2022-04-05
+ * last update 2022-04-06
  */
 
 
@@ -22,13 +22,9 @@ KW40Z kw40z(PTE24, PTE25);
 KalmanIMU imu;
 
 DigitalOut haptics(PTB9);
-DigitalOut greenLED(LED2);
 
 Ticker hapticsTimer;
 Ticker activityTimer;
-
-Thread the;
-Mutex mut;
 
 // int time;
 // uint8_t state;
@@ -53,7 +49,6 @@ int main() {
 
 
 void setup() {
-    greenLED = 1;
     // oled
     oled.PowerON();
     // oled.DimScreenON();
@@ -116,8 +111,6 @@ void openState() {
 
 void beginState() {
     oled.FillScreen(COLOR_BLACK);
-    // txtProps.alignParam = OLED_TEXT_ALIGN_CENTER;
-    // oled.SetTextProperties(&txtProps);
     wait_us(50);
     strcpy(txt, "3");
     oled.Label((uint8_t *)txt, 5, 25);
@@ -138,8 +131,6 @@ void beginState() {
 
 
 void activeState() {
-    // txtProps.alignParam = OLED_TEXT_ALIGN_LEFT;
-    // oled.SetTextProperties(&txtProps);
     uint8_t i = 0;
     float pitch = 0;
     activityTimer.attach(secTimeUp, 1);
