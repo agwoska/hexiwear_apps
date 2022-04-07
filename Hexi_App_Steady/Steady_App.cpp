@@ -131,8 +131,10 @@ void beginState() {
 
 
 void activeState() {
+    // txtProps.alignParam = OLED_TEXT_ALIGN_LEFT;
+    // oled.SetTextProperties(&txtProps);
     uint8_t i = 0;
-    float pitch = 0;
+    float pitch = 0, roll = 0;
     activityTimer.attach(secTimeUp, 1);
     while ( i < 60 ) {
         if (startFlag) {
@@ -143,19 +145,20 @@ void activeState() {
             }
             imu.setKalman();
             pitch = abs( imu.calcPitch() );
-            if ( pitch < 95 ) {
+            roll = abs( imu.calcRoll() );
+            if ( pitch < 95 || roll < 95 ) {
                 hapticsMax();
             }
-            else if ( pitch < 120 ) {
+            else if ( pitch < 120 || roll < 120 ) {
                 hapticsMed();
             }
-            else if ( pitch < 140 ) {
+            else if ( pitch < 140 || roll < 140 ) {
                 hapticsLowMed();
             }
-            else if ( pitch < 160 ) {
+            else if ( pitch < 160 || roll < 160 ) {
                 hapticsLow();
             }
-            else if ( pitch < 170 ) {
+            else if ( pitch < 170 || roll < 170 ) {
                 hapticsMin();
             }
             // update display
@@ -166,10 +169,11 @@ void activeState() {
                 sprintf(txt, "Time left: %i  ", 60-i);
             }
             oled.Label((uint8_t *)txt, 5, 40);
-            printf("Time: %i \tPitch: %3.2f\r\n", i, pitch);
+            printf("Time: %i \tPitch: %3.2f\tRoll: %3.2f\r\n", i, pitch, roll);
         }
     }
 }
+
 
 void secTimeUp() {
     activityTimer.detach();
