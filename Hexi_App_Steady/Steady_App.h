@@ -1,29 +1,18 @@
 /**
  * @file Steady_App.h
  * @author Andrew Woska (agwoska@buffalo.edu)
- * @date 2022-03-15
+ * @date 2022-04-05
  * @brief An application header as a 
  *      POC for the Hexiwear to work as a 
  *      therapeutic tool/technology
- * @version 0.0.1
- * last modified 2022-03-15
+ * last modified 2022-04-05
  */
 
 #pragma once
 
-#include "mbed.h"
 
 #ifndef STEADY_APP_H
 #define STEADY_APP_H
-
-/** structures **/
-typedef enum {
-    SCREEN_OPEN,
-    SCREEN_IDLE,
-    SCREEN_ACTIVE,
-    SCREEN_COMPLETE,
-    SCREEN_MAX
-} screens_t;
 
 /** prototype functions **/
 
@@ -32,22 +21,31 @@ typedef enum {
  */
 void hapticsStop();
 /**
- * @brief starts haptics on normal timer 
+ * @brief starts haptics on shortest interval 
  */
-void hapticsOnce();
+void hapticsMin();
 /**
- * @brief have haptics continue at slow intervals 
+ * @brief have haptics on for short interval
  */
 void hapticsLow();
 /**
- * @brief have haptics continue at moderate intervals 
+ * @brief have haptics on for short-ish
+ */
+void hapticsLowMed();
+/**
+ * @brief have haptics on for moderate interval
  */
 void hapticsMed();
 /**
- * @brief have haptics continue at fast intervals
+ * @brief have haptics on for maximum interval
  * @warning do not overuse in case it causes damage
  */
 void hapticsMax();
+
+/**
+ * @brief interrupt handler for button 
+ */
+void btnInterHdlr();
 
 /**
  * @brief counts up timer every second until
