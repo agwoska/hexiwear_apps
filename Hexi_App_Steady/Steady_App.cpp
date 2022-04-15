@@ -2,7 +2,8 @@
  * @file Steady_App.cpp
  * @author Andrew Woska (agwoska@buffalo.edu)
  * @date 2022-04-05
- * last update 2022-04-06
+ * @brief Hexiwear application for the steady arm activity
+ * last update 2022-04-15
  */
 
 
@@ -26,11 +27,11 @@ DigitalOut haptics(PTB9);
 Ticker hapticsTimer;
 Ticker activityTimer;
 
-// int time;
-// uint8_t state;
+/* global variables */
+
 oled_text_properties_t txtProps;
-uint8_t startFlag;
-char txt[20];
+uint8_t startFlag;                  // used for update control
+char txt[20];                       // used for OLED output
 
 
 /** implementation **/
@@ -42,7 +43,7 @@ int main() {
         beginState();
         activeState();
         completeState();
-        wait(1);
+        wait(2);    // wait 2 seconds
     }
 }
 
@@ -51,7 +52,6 @@ int main() {
 void setup() {
     // oled
     oled.PowerON();
-    // oled.DimScreenON();
     oled.FillScreen(COLOR_BLACK);
     oled.GetTextProperties(&txtProps);
     txtProps.fontColor = COLOR_WHITE;
@@ -75,23 +75,23 @@ void hapticsStop() {
     haptics = 0;
 }
 void hapticsMin() {
-    hapticsTimer.attach(hapticsStop, 0.05f);
-    haptics = 1;
-}
-void hapticsLow() {
     hapticsTimer.attach(hapticsStop, 0.1f);
     haptics = 1;
 }
-void hapticsLowMed() {
+void hapticsLow() {
     hapticsTimer.attach(hapticsStop, 0.2f);
     haptics = 1;
 }
-void hapticsMed() {
+void hapticsLowMed() {
     hapticsTimer.attach(hapticsStop, 0.3f);
     haptics = 1;
 }
-void hapticsMax() {
+void hapticsMed() {
     hapticsTimer.attach(hapticsStop, 0.4f);
+    haptics = 1;
+}
+void hapticsMax() {
+    hapticsTimer.attach(hapticsStop, 0.6f);
     haptics = 1;
 }
 
@@ -140,7 +140,7 @@ void activeState() {
         if (startFlag) {
             ++i;
             startFlag = 0;
-            if ( i < 60 ) { // prevent extra ticker event
+            if ( i < 60 ) { // prevent extra ticker event and flag update
                 activityTimer.attach(secTimeUp, 1);
             }
             imu.setKalman();
@@ -182,11 +182,10 @@ void secTimeUp() {
 
 
 void completeState() {
-    startFlag = 0;
+    startFlag = 0;  // reset flag
     strcpy(txt, "Activity");
     oled.Label((uint8_t *)txt, 5, 25);
     strcpy(txt, "completed  ");
     oled.Label((uint8_t *)txt, 5, 40);
     printf("Done\r\n");
-    wait(1);
 }

@@ -27,22 +27,11 @@
 #define DEBUG
 #endif // DEBUG
 
-// #define RESTRICT_PITCH
 
 #define PI          (3.14159265)
 #define RAD_TO_DEG  (180.0 / PI)    // approx. 57.29578
 
 /** structures */
-
-/**
- * structure to hold 3 dimentional vector
- * @deprecated use variables in the class under public
- */
-typedef struct Vector {
-    float x;
-    float y;
-    float z;
-} axis_t;
 
 /**
  * holds important values for Kalman Filter processing
@@ -100,14 +89,30 @@ public:
     /** public variables */
 
     /**
+     * holds accelerometer data returned from setKalman 
      * array positions and values:
      * [0] - x-axis
      * [1] - y-axis
      * [2] - z-axis
      */
-
     float accel_data[3];
+
+    /**
+     * holds magnetometer data returned from setKalman 
+     * array positions and values:
+     * [0] - x-axis
+     * [1] - y-axis
+     * [2] - z-axis
+     */
     float mag_data[3]; 
+
+    /**
+     * holds gyroscope data returned from setKalman 
+     * array positions and values:
+     * [0] - x-axis
+     * [1] - y-axis
+     * [2] - z-axis
+     */
     float gyro_data[3];
 
     /* holds the data for the current Kalman Filtered values */
@@ -119,6 +124,7 @@ private:
     FXOS8700 mag;
     FXAS21002 gyro;
 
+    /* uses Kalman Filter library */
     Kalman kalman_pitch;
     Kalman kalman_roll;
     Kalman kalman_yaw;
@@ -132,6 +138,5 @@ private:
     uint32_t lTime;
 
 };
-
 
 #endif // Hexi_Kalman_h

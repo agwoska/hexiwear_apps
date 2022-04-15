@@ -5,7 +5,7 @@ it is simply a general reference for developers
 in the Embedded Sensing and Computing Lab under
 Dr. Wenyao Xu.
 
-Created by Andrew.
+Created by Andrew and Shardul
 
 ## Overview
 
@@ -15,7 +15,7 @@ This application will implement an activity that
 will track the user's arm orientation to make sure 
 they keep their arm steady.
 Level to ground is considered the ideal state.
-Anything exceeding 10-15 degrees will be considered
+Anything exceeding 10 degrees will be considered
 non-ideal and will count for negative feedback to the user.
 
 The feedback present in the system will include 

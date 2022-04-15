@@ -74,26 +74,7 @@ void KalmanIMU::setKalman() {
     float *kalAngle = kalData->kalAngle;
     float *gyroAngle = kalData->gyroAngle;
 
-    #ifdef RESTRICT_PITCH
-
-    if ( (roll < -90.0 && kalAngle[0] > 90.0) ||
-         (roll > 90.0 && kalAngle[0] < -90.0) ) {
-            kalman_roll.setAngle(roll);
-            kalAngle[0]  = roll;
-            gyroAngle[0] = roll;
-    }
-    else {
-        // calculate the angle using a Kalman filter
-        kalAngle[0] = kalman_roll.getAngle(roll, gyro_data[0], dt);
-    }
-    if ( kalAngle[0] > 90.0 || kalAngle[0] < -90.0 ) {
-        // Invert rate, so it fits the restriced accelerometer reading
-        gyroRateY = -gyroRateY;
-    }
-    kalAngle[1] = kalman_pitch.getAngle(pitch, gyroRateY, dt);
-
-    #else
-
+    // fix and set  angles
     if ( (pitch < -90.0 && kalAngle[1] > 90.0) ||
          (pitch > 90.0 && kalAngle[1] < -90.0) ) {
             kalman_pitch.setAngle(pitch);
@@ -123,49 +104,13 @@ void KalmanIMU::setKalman() {
 
     // set Yaw
     kalAngle[2] = yaw;
-    // complementary filter for yaw
-    // TODO - Discord is down
-    
-
 
     #ifdef DEBUG
-    // printf("Accelerometer \tX-Axis %4.2f \tY-Axis %4.2f \tZ-Axis %4.2f\n\r",
-    //     accel_data[0],
-    //     accel_data[1],
-    //     accel_data[2]
-    // );
-    // printf("Magnetometer \tX-Axis %4.2f \tY-Axis %4.2f \tZ-Axis %4.2f\n\r",
-    //     mag_data[0],
-    //     mag_data[1],
-    //     mag_data[2]
-    // );
-    // printf("Gyroscope \tRoll %4.2f \tPitch %4.2f \tYaw %4.2f\n\r",
-    //     gyro_data[0],
-    //     gyro_data[1],
-    //     gyro_data[2]
-    // );
-    // printf("Kalman X \tRoll %4.2f \tGyro %4.2f \tAngle %4.2f\n\r",
-    //     roll,
-    //     gyroAngle[0],
-    //     kalAngle[0]
-    // );
-    // printf("Kalman Y \tPitch %4.2f \tGyro %4.2f \tAngle %4.2f\n\r",
-    //     pitch,
-    //     gyroAngle[1],
-    //     kalAngle[1]
-    // );
-    // printf("Kalman Z \tYaw %4.2f \tGyro %4.2f \tAngle %4.2f\n\r",
-    //     yaw,
-    //     gyroAngle[2],
-    //     kalAngle[2]
-    // );
-    // printf("\n\r");
     printf("%4.2f\t%4.2f\t%4.2f\n\r",
         roll,
         pitch,
         yaw
     );
-    // printf("%4.2f\n\r", yaw);
     #endif // DEBUG
 }
 
@@ -177,25 +122,9 @@ float KalmanIMU::calcRoll() {
     ) * RAD_TO_DEG;
     angles[0] = theta;
     return theta;
-    // #else
-    // return atan(
-    //     accel_data[1] / sqrt (
-    //         accel_data[0] * accel_data[0] +
-    //         accel_data[2] * accel_data[2]
-    //     ) * RAD_TO_DEG
-    // );
-    // #endif // RESTRICT_PATH
 }
 
 float KalmanIMU::calcPitch() {
-    // #ifdef RESTRICT_PITCH
-    // return atan(
-    //     -accel_data[0] / sqrt(
-    //         accel_data[1] * accel_data[1] +
-    //         accel_data[2] * accel_data[2]
-    //     ) * RAD_TO_DEG
-    // );
-    // #else
     float phi = atan2(
         -accel_data[0], accel_data[2]
     ) * RAD_TO_DEG;
@@ -205,21 +134,6 @@ float KalmanIMU::calcPitch() {
 }
 
 float KalmanIMU::calcYaw() {
-    // return atan2(
-    //     -accel_data[1], accel_data[0]
-    // );
-    // float x = 
-    //     mag_data[0] * cos(gyro_data[0]) -
-    //     mag_data[1] * sin(gyro_data[1]) +
-    //     mag_data[2] * cos(gyro_data[1]) *
-    //     sin(gyro_data[0]);
-    // float y =
-    //     mag_data[1] * cos(gyro_data[1]) +
-    //     mag_data[2] * sin(gyro_data[2]);
-
-    // return atan2(y, x) / 23.14 * 360.0;
-
-    // TODO
     // https://digitalcommons.calpoly.edu/cgi/viewcontent.cgi?referer=&httpsredir=1&article=1422&context=eesp
     float Mx = 
         mag_data[0] * cos(angles[1]) + 
@@ -244,21 +158,4 @@ kalman_data_t *KalmanIMU::getKalmanData() {
     kalman_data_t *foo;
     memcpy((void *)foo, (void *)kalData, sizeof(kalman_data_t));
     return foo;
-}
-
-// from the Quake III Q_rsqrt function
-// https://en.wikipedia.org/wiki/Fast_inverse_square_root
-float invSqrt(float num) {
-    int i;
-    float x, y;
-    const float threehalfs = 1.5f;
-
-    x = num * 0.5f;
-    y = num;
-    i = *(long *)&y;
-    i = 0x5f3759df - (i >> 1);
-    y = *(float *)&i;
-    y = y * (threehalfs - (x * y * y));
-    
-    return y;
 }
