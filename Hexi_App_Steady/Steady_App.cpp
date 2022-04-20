@@ -2,8 +2,11 @@
  * @file Steady_App.cpp
  * @author Andrew Woska (agwoska@buffalo.edu)
  * @date 2022-04-05
- * @brief Hexiwear application for the steady arm activity
- * last update 2022-04-15
+* @brief An application implementation as a 
+ *      POC for the Hexiwear to work as a 
+ *      therapeutic tool/technology
+ * @version 1.1.0
+ * last update 2022-04-20
  */
 
 
@@ -15,23 +18,26 @@
 #include "Hexi_OLED_SSD1351.h"
 #include "Hexi_KW40Z.h"
 #include "Hexi_Kalman.h"
+#include "Hexi_Battery.h"
 
 /** initialize objects and variables **/
 
 SSD1351 oled(PTB22, PTB21, PTC13, PTB20, PTE6, PTD15);
 KW40Z kw40z(PTE24, PTE25);
 KalmanIMU imu;
+HexiwearBattery bat;
 
 DigitalOut haptics(PTB9);
+DigitalOut redLED(LED1);
+DigitalOut greenLED(LED2);
+DigitalOut blueLED(LED3);
 
 Ticker hapticsTimer;
 Ticker activityTimer;
 
-/* global variables */
-
 oled_text_properties_t txtProps;
-uint8_t startFlag;                  // used for update control
-char txt[20];                       // used for OLED output
+uint8_t startFlag;
+char txt[20];
 
 
 /** implementation **/
@@ -41,77 +47,122 @@ int main() {
     while (true) {
         openState();
         beginState();
-        activeState();
+        if ( FLAG_ON == startFlag ) {
+            startFlag = FLAG_OFF;
+            activeState();
+        }
+        else {
+            startFlag = FLAG_OFF;
+            activeStateAlt();
+        }
         completeState();
-        wait(2);    // wait 2 seconds
+        wait(1);
     }
 }
 
 
 
+void setLED(int led) {
+    uint8_t red = led & 0x1;
+    uint8_t green = (led & 0x2) >> 1;
+    uint8_t blue = led >> 2;
+    redLED = !red;
+    greenLED = !green;
+    blueLED = !blue;
+}
+
+
 void setup() {
     // oled
+    setLED(0x0);
     oled.PowerON();
+    oled.DimScreenON();
     oled.FillScreen(COLOR_BLACK);
     oled.GetTextProperties(&txtProps);
     txtProps.fontColor = COLOR_WHITE;
     txtProps.alignParam = OLED_TEXT_ALIGN_LEFT;
     oled.SetTextProperties(&txtProps);
     // sensors
+    bat.sensorOn();
     imu.setup();
     imu.setKalman();
-    kw40z.attach_buttonLeft(btnInterHdlr);
-    startFlag = 0;
+    // interrupt setup
+    kw40z.attach_buttonLeft(btnLeftHdlr);
+    kw40z.attach_buttonRight(btnRightHdlr);
+    startFlag = FLAG_OFF;
 }
 
 
-void btnInterHdlr() {
-    startFlag = 1;
+void btnLeftHdlr() {
+    startFlag = FLAG_ON;
 }
 
+void btnRightHdlr() {
+    startFlag = FLAG_ALT;
+}
 
 void hapticsStop() {
     hapticsTimer.detach();
     haptics = 0;
 }
 void hapticsMin() {
-    hapticsTimer.attach(hapticsStop, 0.1f);
+    hapticsTimer.attach(hapticsStop, 0.05f);
     haptics = 1;
+    setLED(0x7); // white
 }
 void hapticsLow() {
-    hapticsTimer.attach(hapticsStop, 0.2f);
+    hapticsTimer.attach(hapticsStop, 0.1f);
     haptics = 1;
+    setLED(0x6); // cyan
 }
 void hapticsLowMed() {
-    hapticsTimer.attach(hapticsStop, 0.3f);
+    hapticsTimer.attach(hapticsStop, 0.2f);
     haptics = 1;
+    setLED(0x4); // blue
 }
 void hapticsMed() {
-    hapticsTimer.attach(hapticsStop, 0.4f);
+    hapticsTimer.attach(hapticsStop, 0.3f);
     haptics = 1;
+    setLED(0x5); // purple
 }
 void hapticsMax() {
-    hapticsTimer.attach(hapticsStop, 0.6f);
+    hapticsTimer.attach(hapticsStop, 0.4f);
     haptics = 1;
+    setLED(0x1); // red
 }
 
 
 void openState() {
+    setLED(0x0);
+    oled.FillScreen(COLOR_BLACK);
     strcpy(txt, "Press left");
-    oled.Label((uint8_t *)txt, 5, 25);
+    oled.Label((uint8_t *)txt, 5, 20);
+    strcpy(txt, "for case 1 &");
+    oled.Label((uint8_t *)txt, 5, 35);
+    strcpy(txt, "Press right");
+    oled.Label((uint8_t *)txt, 5, 50);
+    strcpy(txt, "for case 2");
+    oled.Label((uint8_t *)txt, 5, 65);
     strcpy(txt, "to start       ");
-    oled.Label((uint8_t *)txt, 5, 40);
+    oled.Label((uint8_t *)txt, 5, 80);
     printf("Waiting...\r\n");
-    while (!startFlag) {
-        wait_ms(100);
+    uint8_t btry = bat.readLevelPercent();
+    sprintf(txt, "Battry: %i%%", btry);
+    oled.Label((uint8_t *)txt, 5, 5);
+    while (!startFlag) { // wait until a button is pressed
+        wait_ms(200);
+        btry = bat.readLevelPercent();
+        sprintf(txt, "Battery: %i%%   ", btry);
+        oled.Label((uint8_t *)txt, 5, 5);
     }
-    startFlag = 0;
 }
 
 
 void beginState() {
     oled.FillScreen(COLOR_BLACK);
+    setLED(0x2);
     wait_us(50);
+    // count down
     strcpy(txt, "3");
     oled.Label((uint8_t *)txt, 5, 25);
     printf("3\r\n");
@@ -131,8 +182,6 @@ void beginState() {
 
 
 void activeState() {
-    // txtProps.alignParam = OLED_TEXT_ALIGN_LEFT;
-    // oled.SetTextProperties(&txtProps);
     uint8_t i = 0;
     float pitch = 0, roll = 0;
     activityTimer.attach(secTimeUp, 1);
@@ -140,7 +189,7 @@ void activeState() {
         if (startFlag) {
             ++i;
             startFlag = 0;
-            if ( i < 60 ) { // prevent extra ticker event and flag update
+            if ( i < 60 ) { // prevent extra ticker event
                 activityTimer.attach(secTimeUp, 1);
             }
             imu.setKalman();
@@ -161,6 +210,54 @@ void activeState() {
             else if ( pitch < 170 || roll < 170 ) {
                 hapticsMin();
             }
+            else {
+                setLED(0x2);
+            }
+            // update display
+            if ( i < 10 ) {
+                sprintf(txt, "Time left:   %i  ", 60-i);
+            }
+            else {
+                sprintf(txt, "Time left: %i  ", 60-i);
+            }
+            oled.Label((uint8_t *)txt, 5, 40);
+            printf("Time: %i \tPitch: %3.2f\tRoll: %3.2f\r\n", i, pitch, roll);
+        }
+    }
+}
+
+void activeStateAlt() {
+    uint8_t i = 0;
+    float pitch = 0, roll = 0;
+    activityTimer.attach(secTimeUp, 1);
+    while ( i < 60 ) {
+        if (startFlag) {
+            ++i;
+            startFlag = 0;
+            if ( i < 60 ) { // prevent extra ticker event
+                activityTimer.attach(secTimeUp, 1);
+            }
+            imu.setKalman();
+            pitch = abs( imu.calcPitch() );
+            roll = abs( imu.calcRoll() );
+            if ( pitch < 10 || pitch > 170) {
+                hapticsMax();
+            }
+            else if ( pitch < 30 || pitch > 150 ) {
+                hapticsMed();
+            }
+            else if ( pitch < 50 || pitch > 130 ) {
+                hapticsLowMed();
+            }
+            else if ( pitch < 70 || pitch > 110 ) {
+                hapticsLow();
+            }
+            else if ( pitch < 80 || pitch > 100 ) {
+                hapticsMin();
+            }
+            else {
+                setLED(0x2);
+            }
             // update display
             if ( i < 10 ) {
                 sprintf(txt, "Time left:   %i  ", 60-i);
@@ -177,15 +274,16 @@ void activeState() {
 
 void secTimeUp() {
     activityTimer.detach();
-    startFlag = 1;
+    startFlag = FLAG_ON;
 }
 
 
 void completeState() {
-    startFlag = 0;  // reset flag
+    startFlag = FLAG_OFF;
     strcpy(txt, "Activity");
     oled.Label((uint8_t *)txt, 5, 25);
     strcpy(txt, "completed  ");
     oled.Label((uint8_t *)txt, 5, 40);
     printf("Done\r\n");
+    wait(1);
 }
