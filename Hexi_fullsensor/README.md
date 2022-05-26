@@ -7,7 +7,7 @@ Implements Hexiwear utilizing all of its sensors (except light).
 ## BOM
 
 - Hexiwear device and development board
-- Mbed account and IDE
+- Mbed account, OS, and IDE
 
 ## Sensors
 

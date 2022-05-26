@@ -11,27 +11,35 @@ Created by Andrew and Shardul
 
 This activity is used as a Proof-of-Concept for the
 Wristsense project. 
-This application will implement an activity that 
+This application implements an activity that 
 will track the user's arm orientation to make sure 
 they keep their arm steady.
-Level to ground is considered the ideal state.
+
+There are two cases defined in the [poster](https://woska.net/papers/SURC22_poster.pdf)
+about this project.
+
+Your hand level to ground is considered the ideal state for case 1.
+Your hand 90 degrees offset in the position of holding a bottle
+is considered the ideal state for case 2.
 Anything exceeding 10 degrees will be considered
 non-ideal and will count for negative feedback to the user.
 
 The feedback present in the system will include 
-haptic (or vibrational) and visual feedback. 
+haptic (or vibrational) and visual feedback.
+This feedback will increase until the maximum negative feedback
+is reached.
+A 90 degree offset from the base of the case is where the maximum feedback is reached.
 Audio feedback will be implemented in a future version
 to simulate rythimic stimulation to the user.
 
 This project uses the Hexiwear smartwatch with 
 the Mbed OS 5 platform.
-This application will likely be used for SURC 
-(SUNY Undergraduate Research Conference)
-in April 2022 if appropriate.
+This application was used for SURC
+(SUNY Undergraduate Research Conference) in April 2022.
 
 ## Summary
 
-This application supplies the user with an activity
+This application supplies the user with activities
 to test the stability of a user's arm movement.
 The task tests if the user's arm is steady.
 If the user's arm is not steady, the haptic feedback
@@ -40,8 +48,8 @@ If steady, the haptic feedback will trigger a fast response.
 
 ## Libraries
 
-All libraries with a star next to them are libraries that
-I, Andrew, have personally created. This being the case, there are no licenses currently attached to them.
+All libraries with an asterisk next to them are libraries that
+I, Andrew, have personally created. This being the case, there are no licenses currently attached to them. Links to the library can be found in [hexi_libs.txt](../hexi_libs.txt).
 
 - FXAS21002
 - FXOS8700

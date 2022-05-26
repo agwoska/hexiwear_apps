@@ -3,6 +3,10 @@
 The KW40Z controls and implements the buttons
 and BLE on Hexiwear.
 
+This driver was a work-in-progress that was re-written from the
+original but not finished. 
+Both the original and rewritten versions have been included.
+
 ## Licensing
 
 _The following statement only applies to Hexi_KW40Z.cpp and Hexi_KW40Z.h and is present within the code._

@@ -2,11 +2,11 @@
  * @file Steady_App.cpp
  * @author Andrew Woska (agwoska@buffalo.edu)
  * @date 2022-04-05
-* @brief An application implementation as a 
+ * @brief An application implementation as a 
  *      POC for the Hexiwear to work as a 
  *      therapeutic tool/technology
- * @version 1.1.0
- * last update 2022-04-20
+ * @version 1.1.1
+ * last update 2022-05-25
  */
 
 
@@ -47,16 +47,16 @@ int main() {
     while (true) {
         openState();
         beginState();
-        if ( FLAG_ON == startFlag ) {
+        if ( FLAG_ON == startFlag ) {   // case 1
             startFlag = FLAG_OFF;
             activeState();
         }
-        else {
+        else {                          // case 2
             startFlag = FLAG_OFF;
             activeStateAlt();
         }
         completeState();
-        wait(1);
+        wait(1);                        // wait an extra second until repeat
     }
 }
 
@@ -73,8 +73,8 @@ void setLED(int led) {
 
 
 void setup() {
-    // oled
     setLED(0x0);
+    // oled setup
     oled.PowerON();
     oled.DimScreenON();
     oled.FillScreen(COLOR_BLACK);
@@ -82,11 +82,11 @@ void setup() {
     txtProps.fontColor = COLOR_WHITE;
     txtProps.alignParam = OLED_TEXT_ALIGN_LEFT;
     oled.SetTextProperties(&txtProps);
-    // sensors
+    // sensor setup
     bat.sensorOn();
     imu.setup();
     imu.setKalman();
-    // interrupt setup
+    // button interrupt setup
     kw40z.attach_buttonLeft(btnLeftHdlr);
     kw40z.attach_buttonRight(btnRightHdlr);
     startFlag = FLAG_OFF;
@@ -146,6 +146,7 @@ void openState() {
     strcpy(txt, "to start       ");
     oled.Label((uint8_t *)txt, 5, 80);
     printf("Waiting...\r\n");
+    // have access to battery to make sure there isadequate time to demo
     uint8_t btry = bat.readLevelPercent();
     sprintf(txt, "Battry: %i%%", btry);
     oled.Label((uint8_t *)txt, 5, 5);
@@ -285,5 +286,5 @@ void completeState() {
     strcpy(txt, "completed  ");
     oled.Label((uint8_t *)txt, 5, 40);
     printf("Done\r\n");
-    wait(1);
+    wait(1);    // return to start screen after a second
 }

@@ -1,14 +1,14 @@
 /**
  * @file Hexi_BLE_main.h
- * @author Andrew Woska (you@domain.com)
+ * @author Andrew Woska (agwoska@buffalo.edu)
  * @brief Example program for the KW40Z processor
- *      using BLE and comunicating with a smartphone
- * @version 0.1
+ *      using BLE and communicating with a smartphone
+ * @version 0.2
  * @date 2022-03-04
  * 
  * @note based on Mbed program
  * 
- * last updated 2022-03-03
+ * last updated 2022-05-25
  * 
  */
 
@@ -60,11 +60,8 @@ uint8_t battery;
 
 /** implementation **/
 
-// main() runs in its own thread in the OS
 int main() {
     setup()
-
-
     txThread.start(txTask);
     while (true) {
         ThisThread::wait(50);
@@ -117,7 +114,7 @@ void txTask() {
 
 
 void updateSensors() {
-    if ( bat.isBatteryChargin() ) {
+    if ( bat.isBatteryCharging() ) {
         battery = 100;
     }
     else {
@@ -141,9 +138,6 @@ void stopHaptics() {
     haptics = 0;
     hapticTimer.stop();
 }
-
-
-
 
 
 
@@ -223,4 +217,3 @@ void readHR() {
     printf("HR: %d\r\n", realHeartRate);
     #endif // DEBUG
 }
-

@@ -15,7 +15,7 @@ Last updated: December 1, 2021
 
 Kalman Filter implementation by Shardul.
 
-Hexiwear integration and all other implementions by Andrew.
+Hexiwear and Mbed integration and all other implementions by Andrew.
 
 ## Sensors
 

@@ -1,17 +1,24 @@
 Hexiwear Libraries Used
 
+FXAS21002 (Gyroscope)
 http://os.mbed.com/users/AswinSivakumar/code/FXAS21002/
 
+FXOS8700 (Accelerometer and Magnetometer)
 https://os.mbed.com/users/AswinSivakumar/code/FXOS8700/
 
+HTU21 (Humidity and Temperature)
 http://os.mbed.com/teams/Hexiwear/code/Hexi_Humid_Temp_Example/
 
+KW40Z (Buttons and BLE)
 http://os.mbed.com/teams/Hexiwear/code/Hexi_KW40Z/
 
+MAX30101 (Heart Rate)
 http://os.mbed.com/teams/MaximIntegrated/code/MAX30101/
 
+TSL2561 (Luminosity)
 http://os.mbed.com/users/i_am_kitsune/code/TSL2561/
 
+Battery
 https://os.mbed.com/users/fredlak/code/Hexi_Battery_Example/
 
 MBED OS 5.12

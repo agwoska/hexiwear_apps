@@ -22,7 +22,7 @@ The following sensors were used:
 **Use MBED OS 5.12!**
 
 Flash compiled binary from the Mbed IDE onto the Hexiwear device and
-press the 'reset MK64' buttonon the development board to load/reset.
+press the 'reset MK64' button the development board to load/reset.
 
 The left and right buttons on the bottom will switch between sensors.
 Going right only will give you the following order which will repeat:
@@ -38,6 +38,15 @@ You will need to reset the device to turn it back on.
 The down button on the right side will turn the red LED on and off.
 
 Note that the buttons on the left side have no functionality.
+
+## Warning
+
+There is a mutex error when the humidity/temperature is left on
+for an extended period of time.
+The red LED will flash when this happens.
+This problem does not persist with any other sensors and it is
+currently unknown why this occurs.
+You are able to use the 'reset MK64' button to restart the application.
 
 ## Licensing
 
